@@ -69,6 +69,10 @@ pre {
 	color: var(--color-text);
 }
 
+video {
+	max-width: 100%;
+}
+
 .text-column {
 	display: flex;
 	max-width: 48rem;
