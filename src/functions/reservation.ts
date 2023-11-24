@@ -1,9 +1,12 @@
+interface Response {
+  statusCode: number;
+  body: string;
+}
+
 type Reservation = {
   seat: string;
   name: string;
 };
-
-const reservations: Reservation[] = []; // This will hold the reservations in memory
 
 interface Event {
   httpMethod: string;
@@ -11,11 +14,9 @@ interface Event {
   body: string;
 }
 
-interface Context {
-  // Define the context type if needed
-}
+const reservations: Reservation[] = []; // This will hold the reservations in memory
 
-exports.handler = async (event: Event, context: Context) => {
+export const handler = async (event: Event): Promise<Response> => {
   // Handle GET request - Return current reservations
   if (event.httpMethod === 'GET') {
     return {

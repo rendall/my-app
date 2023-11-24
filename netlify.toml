@@ -1,0 +1,11 @@
+# Netlify configuration
+[build]
+  # Directory for Netlify Functions
+  functions = "src/functions"
+
+[[redirects]]
+  # Redirect rule for the reservation function
+  from = "/functions/reservation/*"
+  to = "/functions/reservation"
+  status = 200
+  force = true
