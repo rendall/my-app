@@ -8,15 +8,24 @@ type Reservation = {
   name: string;
 };
 
-interface Event {
-  httpMethod: string;
+type GETRequest = {
+  httpMethod: "GET";
+}
+
+type DELETERequest = {
+  httpMethod: "DELETE";
+}
+
+type POSTRequest = {
+  httpMethod: "POST";
   path: string;
   body: string;
 }
+type RequestEvent = GETRequest | POSTRequest | DELETERequest;
 
-const reservations: Reservation[] = []; // This will hold the reservations in memory
+let reservations: Reservation[] = []; // This will hold the reservations in memory
 
-export const handler = async (event: Event): Promise<Response> => {
+export const handler = async (event: RequestEvent): Promise<Response> => {
   // Handle GET request - Return current reservations
   if (event.httpMethod === 'GET') {
     return {
@@ -25,15 +34,42 @@ export const handler = async (event: Event): Promise<Response> => {
     };
   }
 
+  if (event.httpMethod === 'DELETE') {
+    reservations = [];
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(reservations),
+    };
+  }
   // Handle POST request - Make a new reservation
   if (event.httpMethod === 'POST') {
     const seat = event.path.split('/').pop(); // Extract the seat from the URL
-    if (!seat) {
+
+    const isValidSeat = seat !== undefined && /^[A-F]\d{1,2}$/.test(seat);
+
+    console.log("isValidSeat", { isValidSeat, seat })
+
+    // seats should start with A-F and end with a number 1-24
+    if (!isValidSeat) {
       return {
         statusCode: 400,
         body: JSON.stringify({ message: "Invalid seat number" }),
       };
     }
+    // Check if seat is already reserved
+    const existingReservation = reservations.find(r => r.seat === seat);
+    console.log("existingReservattion", { existingReservation })
+    if (existingReservation) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: `Seat ${seat} is already reserved` }),
+      };
+    }
+
+
+
+
 
     const name = event.body; // Extract the name from the request payload
 
@@ -44,6 +80,8 @@ export const handler = async (event: Event): Promise<Response> => {
       body: JSON.stringify({ seat, name }),
     };
   }
+
+
 
   // Handle other HTTP methods
   return {
