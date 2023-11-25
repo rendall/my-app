@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { handler as reservationHandler } from './reservation'; // Update the file path if necessary
+import { handler as reservationHandler } from '../functions/reservation'; // Update the file path if necessary
 
 describe('reservation api tests', () => {
   it('should return 200 and []', async () => {
